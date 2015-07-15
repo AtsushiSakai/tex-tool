@@ -1,1 +1,239 @@
-My GitHub Page
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- for smartphone-->
+<meta name="viewport" content="width=device-width, initial-scale=1 minimal-ui">
+<meta name="description" content="Tex Tool">
+<meta name="author" content="Atsushi Sakai">
+<meta name="keywords" content="Atsushi Sakai,MyEnigma,Tex" >
+
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="white">
+<link href="static/css/bootstrap.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="https://dl.dropboxusercontent.com/u/2393628/heroku/TexConverter/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://dl.dropboxusercontent.com/u/2393628/heroku/TexConverter/apple-touch-icon-152x152.png"/>
+<title>Tex Converter</title>
+<script type="text/javascript">
+var equationSize=60;
+
+function loadSavedEquation(){
+  if(localStorage["saveeqs"]!=undefined){
+    document.getElementById('savedequation').innerHTML=localStorage["saveeqs"];
+  }
+}
+
+function getRange() {
+  equationSize = document.getElementById('eqsize').value ;
+  showPreview()
+}
+
+function clearEquation(){
+  localStorage.clear()
+    document.getElementById('savedequation').innerHTML = "";
+}
+
+function getTimeString(){
+
+  var dateobj=new Date(); 
+
+  var year   = dateobj.getFullYear();
+  var month  = dateobj.getMonth()+1;
+  var day    = dateobj.getDate();
+  var hour   = dateobj.getHours();
+  var minute = dateobj.getMinutes();
+  var second = dateobj.getSeconds();
+
+  var timestr=year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second;
+
+  return timestr
+}
+
+function saveEquation(){
+  var text=document.getElementById('beforeConvert').value;
+  var div_element = document.createElement("div");
+  div_element.className = 'form-group';
+
+  var label='<label for="savedequation" class="control-label">'+getTimeString()+' </label><br> '
+  var form='<input type="text" name="title" class="form-control" value="'+text+' ">';
+  var image = "<br><img src='http://chart.apis.google.com/chart?cht=tx&chs="+equationSize.toString()+"&chl="+text+"' /><hr>"
+  div_element.innerHTML =label+form+image;
+  document.getElementById('savedequation').appendChild(div_element);
+
+  if(localStorage["saveeqs"]==undefined){
+    localStorage["saveeqs"]=div_element.innerHTML;
+  }
+  else{
+    localStorage["saveeqs"]=localStorage["saveeqs"]+div_element.innerHTML;
+  }
+}
+
+function showPreview() {
+  input = document.getElementById('beforeConvert').value ;
+  input = input.split("+").join("%2B");
+  var image = "<img src='http://chart.apis.google.com/chart?cht=tx&chs="+equationSize.toString()+"&chl="+input+"' />"
+    var imageurl = "http://chart.apis.google.com/chart?cht=tx&chs="+equationSize.toString()+"60&chl="+input
+    if(input!=""){
+      document.getElementById('preview').innerHTML = image ;
+      document.getElementById('imageurl').setAttribute('value', imageurl);
+      document.getElementById('imagetag').setAttribute('value', image);
+    }
+    else{
+      document.getElementById('preview').innerHTML = "ここに数式の画像が表示されます。" ;
+      document.getElementById('imageurl').setAttribute('value', "");
+      document.getElementById('imagetag').setAttribute('value', "");
+    }
+}
+
+</script>
+</head>
+<body>
+<body onLoad="loadSavedEquation()">
+<div class="navbar navbar-inverse navbar-static-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://myenigma.hatenablog.com/">
+        <img style="vertical-align:middle;" height="28" src="https://dl.dropboxusercontent.com/u/2393628/heroku/common/myenigmaLogo.png"/></a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-left">
+        <li class="hidden">
+        <a href="#page-top"></a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="http://myenigma.hatenablog.com/entry/2015/06/21/110842">本サービスの詳しい使い方</a></li>
+        <li><a href="http://atsushisakai.github.io/">その他Webツール</a></li>
+      </ul>
+    </div><!--/.navbar-collapse -->
+  </div>
+</div>
+
+
+<div class="container" style="padding:10px 0">
+  <div class="container">
+  <div class="jumbotron">
+    <h1>Tex Converter</h1>
+  </div>
+
+  <h2>How to use</h2>
+  <ol>
+    下記のテキストボックスにTexの記法でコードを書くと、リアルタイムに数式が描画されます。
+  </ol>
+  <ol>
+    数式用のURLとimgタグコードもリアルタイムに更新されます。
+  </ol>
+  <ol>
+    加えて、Saveボタンを押すと現在入力されている数式がブラウザにキャッシュされて、後日また再利用することができます。
+  </ol>
+
+
+  <h2>Tex Code</h2>
+
+  <form action="/" enctype="multipart/form-data" method="POST">
+    <div class="form-group">
+      <textarea name="beforeConvert" id="beforeConvert" cols="10" rows="8" onkeyup="showPreview()"
+        placeholder="ここにTex記法のコードを入力して下さい" class="form-control"></textarea>
+    </div>
+  </form>
+
+  <div class="row">
+    <div class="col-md-4">
+    <label class="control-label" for="imageurl">Equation Size</label>
+      <input type=range id='eqsize' min=10 max=100 value=60 onchange="getRange()"/>
+    </div>
+    <div class="col-md-8">
+    </div>
+  </div>
+
+  <h2>Tex Image</h2>
+
+  <hr>
+
+  <div id="preview">ここに数式の画像が表示されます。</div>
+
+  <hr>
+
+  <div class="form-group">
+    <label class="control-label" for="imageurl">ImageURL</label>
+      <input type="text" id="imageurl" class="form-control" placeholder="画像のURLが表示されます">
+  </div>
+  <div class="form-group">
+    <label class="control-label" for="imagetag">ImageTag</label>
+    <input type="text" id="imagetag" class="form-control" placeholder="画像用のHTMLコードが表示されます"/>
+  </div>
+
+
+  <h2>Save Equation</h2>
+  <div class="form-group">
+    <input type="submit" value="Save" class="btn btn-primary" onClick="saveEquation()">
+    <input type="submit" value="Clear" class="btn btn-danger" onClick="clearEquation()">
+  </div>
+
+  <div id="savedequation"></div>
+
+  <!--TweetButton-->
+  <a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+  <!-- hatena button -->
+  <a href="http://b.hatena.ne.jp/entry/https://tex-tool.herokuapp.com/" class="hatena-bookmark-button" data-hatena-bookmark-title="Tex Converter" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+
+  <!--署名-->
+  <footer>
+    <address>
+      For more details and requests, contact
+      <a href="https://twitter.com/atsushi_twi">@Atsushi_twi</a>.
+    </address>
+    <p><small>(c) copyright 2015.</small></p>
+  </footer>
+  </html>
+
+
+  <!-- Google Adscense -->
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-9612347954373886"
+    data-ad-slot="3722314056"
+    data-ad-format="auto"></ins>
+  <script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+
+  </script>
+
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-64524691-1', 'auto');
+  ga('send', 'pageview');
+</script>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12501899-9', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+
