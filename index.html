@@ -65,6 +65,7 @@ function getTimeString(){
 
 function saveEquation(){
   var text=document.getElementById('beforeConvert').value;
+  text = text.split("+").join("%2B");
   var div_element = document.createElement("div");
   div_element.className = 'form-group';
 
@@ -86,17 +87,17 @@ function showPreview() {
   input = document.getElementById('beforeConvert').value ;
   input = input.split("+").join("%2B");
   var image = "<img src='http://chart.apis.google.com/chart?cht=tx&chs="+equationSize.toString()+"&chl="+input+"' />"
-    var imageurl = "http://chart.apis.google.com/chart?cht=tx&chs="+equationSize.toString()+"60&chl="+input
-    if(input!=""){
+  var imageurl = "http://chart.apis.google.com/chart?cht=tx&chs="+equationSize.toString()+"60&chl="+input
+  if(input!=""){
       document.getElementById('preview').innerHTML = image ;
       document.getElementById('imageurl').setAttribute('value', imageurl);
       document.getElementById('imagetag').setAttribute('value', image);
-    }
-    else{
+  }
+  else{
       document.getElementById('preview').innerHTML = "ここに数式の画像が表示されます。" ;
       document.getElementById('imageurl').setAttribute('value', "");
       document.getElementById('imagetag').setAttribute('value', "");
-    }
+  }
 }
 
 </script>
